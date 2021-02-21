@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import { GlobalStyles, theme } from './styles';
 import { ThemeProvider } from 'styled-components';
