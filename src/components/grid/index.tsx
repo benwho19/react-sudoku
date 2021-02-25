@@ -4,22 +4,24 @@ import Block from './block'
 import { useDispatch, useSelector } from 'react-redux'
 import { AnyAction, Dispatch } from 'redux'
 import { createGrid, fillCell, IReducer, selectCell } from 'reducers'
-import { INDEX, CELL_COORD, NUMBERS, N } from 'typings'
+import { INDEX, CELL_COORD, NUMBERS, N, GRID } from 'typings'
 import useMousetrap  from 'react-hook-mousetrap'
 
 
 interface IState {
     selectedCell ?: CELL_COORD
     selectedValue: N
+    solvedGrid?: GRID
 }
 
 const Grid: FC = () => {
 
     const state = useSelector<IReducer, IState>(
-        ({selectedCell, workingGrid }) => ({ 
+        ({selectedCell, workingGrid, solvedGrid }) => ({ 
         selectedCell,
         selectedValue: 
             workingGrid && selectedCell ? workingGrid[selectedCell[0]][selectedCell[1]] : 0,
+        solvedGrid,
     }))
     const dispatch = useDispatch<Dispatch<AnyAction>>()
     const create = useCallback(() => dispatch(createGrid()), [dispatch])
@@ -33,10 +35,10 @@ const Grid: FC = () => {
         }, [dispatch, state.selectedCell, state.selectedValue]
     )
 
-
+    
     useEffect(() => {
-        create()
-    }, [create])
+        if (!state.solvedGrid) create()
+    }, [create, state.solvedGrid])
 
     function moveUp() {
         if (state.selectedCell && state.selectedCell[0] > 0) {

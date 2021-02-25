@@ -6,7 +6,10 @@ import { Card, Content, Title, Grid, Numbers, NewgameButton } from './components
 import { Provider } from 'react-redux';
 import { configureStore } from 'core';
 
-const store = configureStore()
+import { PersistGate } from 'redux-persist/integration/react'
+
+const { store, persistor} = configureStore()
+
 
 ReactDOM.render(
     <ThemeProvider theme={theme}>
@@ -14,18 +17,18 @@ ReactDOM.render(
       <GlobalStyles/>
 
       <Provider store={store}> 
-        <Content data-cy="content"> 
-          <Title data-cy="title"> Sudoku </Title> 
-          <Card data-cy="card"> 
-            <NewgameButton/> 
-            <Grid/>
-            <Numbers/>
-          </Card>
-        </Content>
+        <PersistGate loading={null} persistor={persistor}>
+          <Content data-cy="content"> 
+            <Title data-cy="title"> Sudoku </Title> 
+            <Card data-cy="card"> 
+              <NewgameButton/> 
+              <Grid/>
+              <Numbers/>
+            </Card>
+          </Content>
+        </PersistGate> 
       </Provider>
 
-
-      
     </ThemeProvider>,
     document.getElementById('root')
 );
