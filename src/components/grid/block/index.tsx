@@ -13,15 +13,17 @@ interface IProps {
 interface IState {
     value: N
     isActive: boolean
+    isPuzzle: boolean
 }
 
 const Block: FC<IProps> = ({ rowIndex, colIndex}) => {
 
-    const state = useSelector<IReducer, IState>(({ grid, selectedCell })=> ({
-        value: grid ? grid[rowIndex][colIndex]: 0,
+    const state = useSelector<IReducer, IState>(({ workingGrid, selectedCell, challengeGrid })=> ({
+        value: workingGrid ? workingGrid[rowIndex][colIndex]: 0,
         isActive: selectedCell ? selectedCell[0] === rowIndex && 
                                 selectedCell[1] === colIndex
                                : false,
+        isPuzzle: challengeGrid && challengeGrid[rowIndex][colIndex] !== 0 ? true: false 
     }))
 
     const dispatch = useDispatch<Dispatch<AnyAction>>()
@@ -31,7 +33,11 @@ const Block: FC<IProps> = ({ rowIndex, colIndex}) => {
     }
 
     return(
-        <Container active={state.isActive} data-cy={`block-${rowIndex}-${colIndex}`} onClick={handleClick}> 
+        <Container active={state.isActive} 
+                    data-cy={`block-${rowIndex}-${colIndex}`} 
+                    onClick={handleClick}
+                    puzzle={state.isPuzzle}
+                    > 
             {/* | {rowIndex} 
             {colIndex} | */}
             {state.value === 0 ? '': state.value}

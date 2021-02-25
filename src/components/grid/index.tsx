@@ -1,23 +1,38 @@
 import React, { FC, Children, useEffect, useCallback } from 'react'
-
 import { Container, Row } from './styles'
 import Block from './block'
 import { useDispatch, useSelector } from 'react-redux'
 import { AnyAction, Dispatch } from 'redux'
-import { createGrid, IReducer, selectCell } from 'reducers'
-import { INDEX, CELL_COORD } from 'typings'
+import { createGrid, fillCell, IReducer, selectCell } from 'reducers'
+import { INDEX, CELL_COORD, NUMBERS, N } from 'typings'
 import useMousetrap  from 'react-hook-mousetrap'
 
 
 interface IState {
     selectedCell ?: CELL_COORD
+    selectedValue: N
 }
 
 const Grid: FC = () => {
 
-    const state = useSelector<IReducer, IState>( ({ selectedCell }) => ({ selectedCell })  )
+    const state = useSelector<IReducer, IState>(
+        ({selectedCell, workingGrid }) => ({ 
+        selectedCell,
+        selectedValue: 
+            workingGrid && selectedCell ? workingGrid[selectedCell[0]][selectedCell[1]] : 0,
+    }))
     const dispatch = useDispatch<Dispatch<AnyAction>>()
     const create = useCallback(() => dispatch(createGrid()), [dispatch])
+
+    const fill = useCallback(
+        (n: NUMBERS) => {
+            if (state.selectedCell && state.selectedValue === 0) {
+                dispatch(fillCell(n, state.selectedCell))
+            }
+
+        }, [dispatch, state.selectedCell, state.selectedValue]
+    )
+
 
     useEffect(() => {
         create()
@@ -66,6 +81,16 @@ const Grid: FC = () => {
             )
         }
     }
+
+    useMousetrap('1', () => fill(1))
+    useMousetrap('2', () => fill(2))
+    useMousetrap('3', () => fill(3))
+    useMousetrap('4', () => fill(4))
+    useMousetrap('5', () => fill(5))
+    useMousetrap('6', () => fill(6))
+    useMousetrap('7', () => fill(7))
+    useMousetrap('8', () => fill(8))
+    useMousetrap('9', () => fill(9))
 
     useMousetrap('up', moveUp)
     useMousetrap('down', moveDown)
